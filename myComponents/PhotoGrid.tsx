@@ -4,6 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { db } from "@/lib/firebase";
+import { useEffect } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
 
 // Custom color palette as Tailwind classes (add these to your tailwind.config.js)
 const palette = {
@@ -85,6 +88,16 @@ const mockPhotos = [
 
 export function PhotoGrid() {
   const [photos, setPhotos] = useState(mockPhotos);
+  const [feedItems, setFeedItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "feed"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setFeedItems(data);
+    });
+
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []);
 
   const handleLike = (id: string) => {
     setPhotos(
@@ -105,7 +118,7 @@ export function PhotoGrid() {
     <div
       className={`grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-screen p-8 ${palette.pearl}`}
     >
-      {photos.map((photo) => (
+      {feedItems.map((photo) => (
         <div
           key={photo.id}
           className={`relative rounded-xl overflow-hidden border-2 ${palette.bgWhite} ${palette.borderGreen} shadow-md transition-shadow`}
@@ -114,9 +127,16 @@ export function PhotoGrid() {
             className={`flex items-center px-3 py-3 border-b ${palette.bgPearl} ${palette.borderMidGreen}`}
           >
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-base ${palette.bgOlive} text-white`}
+              className={`w-8 h-8 rounded-full  items-center  font-semibold text-base ${palette.bgOlive} text-white overflow-hidden`}
             >
-              {photo.uploadedBy.charAt(0).toUpperCase()}
+              <Image
+                className="mx-auto my-auto rounded-full"
+                src={photo.userProfileImage}
+                alt={photo.userName}
+                height={35}
+                width={35}
+              />
+              {/* {photo.uploadedBy.charAt(0).toUpperCase()} */}
             </div>
             <div className="ml-2">
               <p className={`font-medium text-[0.95rem] ${palette.darkGreen}`}>
@@ -128,7 +148,7 @@ export function PhotoGrid() {
 
           <div className="relative aspect-square">
             <Image
-              src={photo.imageUrl || "/placeholder.svg"}
+              src={photo.fileUrl || "/placeholder.svg"}
               alt={photo.caption}
               fill
               className={`object-cover ${palette.bgPearl}`}
@@ -153,7 +173,7 @@ export function PhotoGrid() {
                       color: photo.liked ? "#71b340" : "#3c5a14",
                     }}
                   />
-                  <span className="text-sm">{photo.likes}</span>
+                  <span className="text-sm">{}</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -161,7 +181,7 @@ export function PhotoGrid() {
                   className={`flex items-center gap-1 h-auto p-1 ${palette.deepOlive}`}
                 >
                   <MessageCircle className="w-5 h-5" />
-                  <span className="text-sm">{photo.comments}</span>
+                  <span className="text-sm">{}</span>
                 </Button>
               </div>
               <Button

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Camera, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhotoGrid } from "@/myComponents/PhotoGrid";
 import { UploadButton } from "@/myComponents/uploadBTN";
@@ -26,7 +27,6 @@ export default function Home() {
             Nelson & Yashalee
           </Link>
           <div className="flex items-center gap-4">
-            <UploadButton />
             <Button
               variant="outline"
               size="sm"
@@ -68,7 +68,15 @@ export default function Home() {
             ¡Gracias por ser parte de nuestro día especial! Comparte tus
             momentos y mira las fotos de nuestra boda.
           </p>
-          <UploadButton />
+
+          <Link
+            className="bg-[#11270b] w-fit flex items-center px-4 py-1 rounded-lg text-white mx-auto h-full  transition-all ease-in-out duration-100 hover:scale-110"
+            href={`/subir-fotos`}
+            prefetch={true}
+          >
+            <Camera className=" relative w-4 h-4 mr-2" />
+            <p>Comparte tus fotos</p>
+          </Link>
         </section>
 
         {/* Photo Grid */}
