@@ -34,7 +34,6 @@ import { cn } from "@/lib/utils";
 import { auth, signOutUser } from "@/lib/firebase";
 import { Timestamp } from "firebase/firestore";
 import { SignOutButton } from "@/myComponents/SignOutBtn";
-import Link from "next/link";
 import { PhotoGrid } from "@/myComponents/PhotoGrid";
 
 type UploadFile = {
