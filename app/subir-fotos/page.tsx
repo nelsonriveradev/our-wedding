@@ -4,6 +4,7 @@ import type React from "react";
 import { createFeedItem, FeedItem } from "../actions/feedCreation";
 import { storage } from "@/lib/firebase";
 import { useState, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -30,8 +31,11 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { auth } from "@/lib/firebase";
+import { auth, signOutUser } from "@/lib/firebase";
 import { Timestamp } from "firebase/firestore";
+import { SignOutButton } from "@/myComponents/SignOutBtn";
+import Link from "next/link";
+import { PhotoGrid } from "@/myComponents/PhotoGrid";
 
 type UploadFile = {
   id: string;
@@ -47,18 +51,16 @@ export default function MultiPhotoUpload() {
   const [uploading, setUploading] = useState(false);
   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState<UploadFile[]>([]);
-  const [fileUrl, setFileURL] = useState<string>();
+  // const [fileUrl, setFileURL] = useState<string>();
   const [overallProgress, setOverallProgress] = useState(0);
   const dropzoneRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const router = useRouter();
   //user data
   const user = auth.currentUser;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/heic"];
-  const metadata = {
-    contentType: "image/jpeg",
-  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
@@ -112,18 +114,21 @@ export default function MultiPhotoUpload() {
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    if (dropzoneRef.current) {
-      dropzoneRef.current.classList.remove("border-amber-500", "bg-amber-50");
-    }
+      if (dropzoneRef.current) {
+        dropzoneRef.current.classList.remove("border-amber-500", "bg-amber-50");
+      }
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      addFiles(Array.from(e.dataTransfer.files));
-    }
-  }, []);
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        addFiles(Array.from(e.dataTransfer.files));
+      }
+    },
+    [addFiles]
+  );
 
   const removeFile = (id: string) => {
     setFiles((prev) => {
@@ -368,10 +373,27 @@ export default function MultiPhotoUpload() {
     }
     setOpen(newOpen);
   };
+  async function handleSignOut() {
+    try {
+      await signOutUser();
+      router.push("/acceder");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  }
 
   return (
     <div className="w-full h-screen bg-[#F8F6F0]">
       <div className="">
+        <div className="flex items-center justify-center gap-x-2">
+          <SignOutButton onSignOut={handleSignOut} />
+          <Link
+            className="px-4 py-1 bg-[#11270b] text-white rounded-lg shadow-2xs"
+            href={`/`}
+          >
+            Ver Fotos
+          </Link>
+        </div>
         <div className="flex flex-col items-center justify-center h-full space-y-4">
           <h1 className="text-3xl font-bold text-[#11270b]">
             Bienvenido a Nuestro Álbum de Boda
@@ -574,6 +596,7 @@ export default function MultiPhotoUpload() {
             </DialogContent>
           </Dialog>
         </div>
+        <PhotoGrid />
       </div>
     </div>
   );

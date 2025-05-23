@@ -1,9 +1,9 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { Camera, Upload } from "lucide-react";
+import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhotoGrid } from "@/myComponents/PhotoGrid";
-import { UploadButton } from "@/myComponents/uploadBTN";
 
 export default function Home() {
   return (

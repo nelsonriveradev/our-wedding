@@ -1,29 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 import type { User } from "firebase/auth";
-import { auth, signInWithGoogle, signOutUser } from "@/lib/firebase"; // Adjust path if necessary
+import { auth, signInWithGoogle } from "@/lib/firebase"; // Adjust path if necessary
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { SignOutButton } from "@/myComponents/SignOutBtn";
 
-const palette = {
-  primary: "#11270b",
-  secondary: "#71b340",
-  accent: "#669D31",
-  accentDark: "#598B2c",
-  accentDarker: "#3c5a14",
-};
 export default function SignIn() {
   const router = useRouter();
   const [userData, setUserData] = useState<User | undefined>();
-  const [userToken, setUserToken] = useState<string | undefined>();
+  //   const [userToken, setUserToken] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser: User | null) => {
       setUserData(currentUser || undefined);
       setLoading(false);
     });
@@ -44,19 +37,17 @@ export default function SignIn() {
         // Optionally, display an error message to the user here
       }
     } catch (error) {
-      const typedError = error as any; // Cast error to 'any' type
-      const errorCode = typedError.code;
-      const errorMessage = typedError.message;
-      const email = typedError.customData?.email;
       console.error(`Error Logging in: ${error}`);
     } finally {
       setLoading(false);
     }
   }
+
   // If loading, show a loading message
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-amber-50 items-center justify-center p-4">
+        {userData?.email ? <SignOutButton /> : null}
         <div className="flex flex-col items-center">
           <svg
             className="animate-spin h-8 w-8 text-[#669D31] mb-4"

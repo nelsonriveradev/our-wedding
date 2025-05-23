@@ -13,7 +13,7 @@ export interface FeedItem {
   caption: string | "";
   fileUrl: string;
   fileType: string;
-  createdAt: Date | any;
+  createdAt: Timestamp;
   // puedes agregar más campos si lo necesitas
 }
 
