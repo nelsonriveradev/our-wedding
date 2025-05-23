@@ -387,12 +387,6 @@ export default function MultiPhotoUpload() {
       <div className="">
         <div className="flex items-center justify-center gap-x-2">
           <SignOutButton onSignOut={handleSignOut} />
-          <Link
-            className="px-4 py-1 bg-[#11270b] text-white rounded-lg shadow-2xs"
-            href={`/`}
-          >
-            Ver Fotos
-          </Link>
         </div>
         <div className="flex flex-col items-center justify-center h-full space-y-4">
           <h1 className="text-3xl font-bold text-[#11270b]">
