@@ -395,6 +395,7 @@ export default function MultiPhotoUpload() {
           <SignOutButton onSignOut={handleSignOut} />
         </div>
         <div className="flex flex-col items-center justify-center h-full space-y-4">
+          <h3>{`Hola! ${user?.displayName} 👋🏽`}</h3>
           <h1 className="text-3xl font-bold text-[#11270b]">
             Bienvenido a Nuestro Álbum de Boda
           </h1>
