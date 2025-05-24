@@ -3,7 +3,7 @@
 import type React from "react";
 import { createFeedItem, FeedItem } from "../actions/feedCreation";
 import { storage } from "@/lib/firebase";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Image from "next/image";
@@ -59,6 +59,13 @@ export default function MultiPhotoUpload() {
   const user = auth.currentUser;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/heic"];
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/acceder");
+    }
+  }, [user, router]);
+  // ...existing code...
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
